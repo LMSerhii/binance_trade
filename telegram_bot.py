@@ -1,11 +1,10 @@
 import time
 
 import talib
-from telebot import TeleBot, types
-import webbrowser
+from telebot import TeleBot
 
-from trade_bot import TradeBot
 from auth_telegram import token
+from trade_bot_future import TradeBotFutures
 
 bot = TeleBot(token=token)
 
@@ -22,24 +21,12 @@ def greetings(message):
 
 @bot.message_handler(commands=['start_robot'])
 def start_alert(message):
-    cfx = TradeBot(symbol=SYMBOL)
-    buy = False
-    sell = True
-    while True:
-        closing_data = cfx.get_data()
-        rsi = talib.RSI(closing_data, 7)[-1]
-        print(rsi)
-        if rsi <= 30 and sell:
-            # print(f"BUY!!!!")
-            bot.send_message(message.chat.id, 'BUY!!! BUY!!! BUY!!!')
-            buy = not buy
-            sell = not sell
-        if rsi >= 70 and buy:
-            # print("SELL!!!")
-            bot.send_message(message.chat.id, "SELL!!! SELL!!! SELL!!!")
-            buy = not buy
-            sell = not sell
-        time.sleep(2)
+    cfx = TradeBotFutures(symbol='CFXUSDT')
+    cfx.start_bot()
+    if cfx.state == 'BUY':
+        bot.send_message(chat_id=message.chat.id, text=f'Совершена покупка CFX\nЦена - {cfx.price}')
+    elif cfx.state == 'Sell':
+        bot.send_message(chat_id=message.chat.id, text=f'Совершена продажа CFX\nЦена - {cfx.price}')
 
 
 if __name__ == '__main__':
