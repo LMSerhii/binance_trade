@@ -85,7 +85,7 @@ class TradeBotFutures:
             closing_data = self._get_data()
             rsi = talib.RSI(closing_data, 7)[-1]
             print(round(rsi))
-            self.price = str(closing_data[-1][4])
+            # self.price = str(closing_data[-1][4])
 
             if rsi <= 30 and not buy:
                 self._place_order(order_type='BUY')
@@ -102,9 +102,9 @@ class TradeBotFutures:
 
 
 def main():
-    cfx = TradeBotFutures(symbol='CFXUSDT')
-    # cfx.start_alert_bot()
-    cfx.start_bot()
+    cfx = TradeBotFutures(symbol='CFXUSDT', interval='1m')
+    cfx.start_alert_bot()
+    # cfx.start_bot()
 
 
 if __name__ == '__main__':
